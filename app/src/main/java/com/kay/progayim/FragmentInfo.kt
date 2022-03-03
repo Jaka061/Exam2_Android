@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.kay.progayim.databinding.FragmInfoBinding
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -15,7 +16,7 @@ class FragmentInfo : Fragment(R.layout.fragm_info) {
     private val binding get() = binding1!!
 
     private lateinit var listener : OnBtnClicked
-    private val episodee get() = Injector.breakingBadApi
+    private val ch get() = Injector.rickandmortyApi
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -27,29 +28,22 @@ class FragmentInfo : Fragment(R.layout.fragm_info) {
         super.onViewCreated(view,savedInstanceState)
         binding1 = FragmInfoBinding.bind(view)
         val id = arguments?.getLong("id")!!
+
         binding.apply {
-            Log.e("TAG", "ID")
-                episodee.getEpisode(id)
+                ch.getById(id)
                     .subscribeOn(Schedulers.io())
-                    .map { it.first() }
+                    .map { it }
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSuccess {
-                        rName.text = "Title: " + it.name
-                        rStatus.text = "season: " + it.status
-                        rSpecies.text = "air date: " + it.species
-                        rLocation.text = "episode: " + it.location
-                        episode.text = "series: " + it.episode
-
-                        Log.e(
-                            "TAG",
-                            "fragmentItemInfo doOnSuccess getById ${Thread.currentThread().name}"
-                        )
-                    }
-                    .doOnError {
-                        Log.e(
-                            "TAG",
-                            "fragmentItemInfo doOnError getById ${Thread.currentThread().name}"
-                        )
+                        val img = image
+                        Glide.with(requireActivity()).load(it.image).into(img)
+                        rName.text = "Name: ${it.name}"
+                        rStatus.text = "Status: ${it.status}"
+                        rSpecies.text = "Species: ${it.species}"
+                        rGender.text = "Gender: ${it.gender}"
+                        rUrl.text = "Url: ${it.url}"
+                        rCreated.text = "Created: ${it.created}"
+                        Log.e("TAG", "Info - ${it.type}")
                     }
                     .subscribe()
         }

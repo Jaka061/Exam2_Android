@@ -4,10 +4,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
-class EmpAdapter(private val click: (id: Long) -> Unit) : RecyclerView.Adapter<EmpAdapter.ViewHolder>(){
+class EmpAdapter(private val click: (id:Long) -> Unit) : RecyclerView.Adapter<EmpAdapter.ViewHolder>(){
 
     private var list = listOf<Character>()
 
@@ -31,21 +33,23 @@ class EmpAdapter(private val click: (id: Long) -> Unit) : RecyclerView.Adapter<E
         return list.size
     }
 
-    class ViewHolder(itemView: View, private val click: (id: Long) -> Unit) :
+    class ViewHolder(itemView: View, private val click: (id:Long) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
 
         fun bind(ch: Character) {
+            val img = itemView.findViewById<AppCompatImageView>(R.id.image)
             val name = itemView.findViewById<AppCompatTextView>(R.id.rName)
-//            val status = itemView.findViewById<AppCompatTextView>(R.id.rStatus)
-//            val species = itemView.findViewById<AppCompatTextView>(R.id.rSpecies)
-//            val location = itemView.findViewById<AppCompatTextView>(R.id.rLocation)
-//            val episode = itemView.findViewById<AppCompatTextView>(R.id.episode)
+            val status = itemView.findViewById<AppCompatTextView>(R.id.rStatus)
+            val species = itemView.findViewById<AppCompatTextView>(R.id.rSpecies)
+            val location = itemView.findViewById<AppCompatTextView>(R.id.rLocation)
+
+            Glide.with(itemView.context).load(ch.image).into(img)
             name.text = ch.name
-//            status.text = ch.status
-//            species.text = ch.species
-//            location.text = ch.location.toString()
-//            episode.text = ch.episode
-            Log.e("TAG", "ID66")
+            status.text = ch.status
+            species.text = ch.species
+            location.text = ch.location.name
+
+            Log.e("TAG", "Adapter")
 
             itemView.setOnClickListener {
                 Log.e("TAG", "Adapter OK")

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kay.progayim.database.Characters
 import com.kay.progayim.databinding.FragmMainBinding
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -16,8 +17,9 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
     private var binding1 : FragmMainBinding? = null
     private val binding get() = binding1!!
 
+    private val dbInstance get() = Injector.database
     private lateinit var listener : OnBtnClicked
-    private val character get() = Injector.breakingBadApi
+    private val character get() = Injector.rickandmortyApi
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -28,12 +30,10 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
         super.onViewCreated(view, savedInstanceState)
         binding1 = FragmMainBinding.bind(view)
 
-
-        //val swipe = view.findViewById<SwipeRefreshLayout>(R.id.swipe)
         val layoutManager = LinearLayoutManager(activity)
         val adapter = EmpAdapter {
-            Log.e("TAG", "ID66")
-            //listener.goToInfo(it)
+            Log.e("TAG", "Main Frg OK $it")
+            listener.goToInfo(it)
         }
 
         binding.apply {
@@ -44,12 +44,31 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
 
         character.getAll()
             .subscribeOn(Schedulers.io())
+            .map {
+                val listCh = mutableListOf<Characters>()
+                it.results.forEach {
+                    val characters = Characters(
+                        id = it.id,
+                        name = it.name,
+                        status = it.status,
+                        species = it.species,
+                        type = it.type,
+                        gender = it.gender,
+                        location = it.location.name,
+                        image = it.image,
+                        created = it.created,
+                        url = it.url
+                    )
+                    listCh.add(characters)
+                }
+                listCh.toList()
+                dbInstance.characterDao().insert(listCh)
+                it.results
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext{
-                adapter.setData(it.results)
-                Log.e(
-                    "TAG", "fragmentMain doOnSuccess getById ${Thread.currentThread().name}"
-                )
+                adapter.setData(it)
+                Log.e("TAG", "fragmentMain doOnSuccess ")
             }
             .doOnError {
                 Log.e(
