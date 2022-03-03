@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,8 +41,14 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
             recycler.layoutManager = layoutManager
             recycler.adapter = adapter
             recycler.addItemDecoration(DividerItemDecoration(activity, RecyclerView.VERTICAL))
-        }
 
+            swipeRefreshLayout.setOnRefreshListener{
+                character.getAll()
+                Toast.makeText(requireContext(),"Готово!",Toast.LENGTH_SHORT) //тост у меня не работает почему то
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        }
+        Toast.makeText(requireContext(),"Готово!",Toast.LENGTH_SHORT)
         character.getAll()
             .subscribeOn(Schedulers.io())
             .map {
@@ -78,6 +85,7 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
             .subscribe()
 
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding1 = null
