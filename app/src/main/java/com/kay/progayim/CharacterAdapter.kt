@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class EmpAdapter(private val click: (id:Long) -> Unit) : RecyclerView.Adapter<EmpAdapter.ViewHolder>(){
+class CharacterAdapter(private val click: (id:Long) -> Unit) : RecyclerView.Adapter<CharacterAdapter.ViewHolder>(){
 
     private var list = listOf<Character>()
 

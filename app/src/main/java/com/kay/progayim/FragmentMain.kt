@@ -21,6 +21,7 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
     private val dbInstance get() = Injector.database
     private lateinit var listener : OnBtnClicked
     private val character get() = Injector.rickandmortyApi
+    private lateinit var adapter : CharacterAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -32,7 +33,7 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
         binding1 = FragmMainBinding.bind(view)
 
         val layoutManager = LinearLayoutManager(activity)
-        val adapter = EmpAdapter {
+        adapter = CharacterAdapter {
             Log.e("TAG", "Main Frg OK $it")
             listener.goToInfo(it)
         }
@@ -41,14 +42,15 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
             recycler.layoutManager = layoutManager
             recycler.adapter = adapter
             recycler.addItemDecoration(DividerItemDecoration(activity, RecyclerView.VERTICAL))
-
-            swipeRefreshLayout.setOnRefreshListener{
-                character.getAll()
-                Toast.makeText(requireContext(),"Готово!",Toast.LENGTH_SHORT) //тост у меня не работает почему то
-                binding.swipeRefreshLayout.isRefreshing = false
+            refresh()
+            swipeRefreshLayout.setOnRefreshListener {
+                refresh()
+                Toast.makeText(context,"Ok ",Toast.LENGTH_SHORT).show()
             }
         }
-        Toast.makeText(requireContext(),"Готово!",Toast.LENGTH_SHORT)
+    }
+
+    private fun refresh() {
         character.getAll()
             .subscribeOn(Schedulers.io())
             .map {
@@ -82,10 +84,11 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
                     "TAG", "fragmentMain doOnError getById ${Thread.currentThread().name}"
                 )
             }
+            .doFinally{
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
             .subscribe()
-
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         binding1 = null
