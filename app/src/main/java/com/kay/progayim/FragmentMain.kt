@@ -54,6 +54,10 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
         character.getAll()
             .subscribeOn(Schedulers.io())
             .map {
+                Thread.sleep(5000)
+                it
+            }
+            .map {
                 val listCh = mutableListOf<Characters>()
                 it.results.forEach {
                     val characters = Characters(
@@ -67,11 +71,12 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
                         image = it.image,
                         created = it.created,
                         url = it.url
+
                     )
                     listCh.add(characters)
                 }
                 listCh.toList()
-                dbInstance.characterDao().insert(listCh)
+                //dbInstance.characterDao().insert(listCh)
                 it.results
             }
             .observeOn(AndroidSchedulers.mainThread())
@@ -88,6 +93,12 @@ class FragmentMain : Fragment(R.layout.fragm_main) {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
             .subscribe()
+
+        dbInstance.characterDao().getAll().observe( viewLifecycleOwner,{
+            it.forEach {
+                Log.e("Tag","url $it")
+            }
+        })
     }
     override fun onDestroyView() {
         super.onDestroyView()

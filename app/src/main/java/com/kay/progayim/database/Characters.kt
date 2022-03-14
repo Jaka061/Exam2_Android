@@ -13,8 +13,9 @@ data class Characters(
     val species: String,
     val type: String,
     val gender: String,
-    val location :String,
-    val image : String?,
-    val url : String,
-    val created : String
+    val location:String,
+    val image: String?,
+    val url: String,
+    val created: String,
+
 )

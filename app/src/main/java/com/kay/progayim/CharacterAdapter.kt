@@ -49,10 +49,10 @@ class CharacterAdapter(private val click: (id:Long) -> Unit) : RecyclerView.Adap
             species.text = ch.species
             location.text = ch.location.name
 
-            Log.e("TAG", "Adapter")
+            //Log.e("TAG", "Adapter")
 
             itemView.setOnClickListener {
-                Log.e("TAG", "Adapter OK")
+                //Log.e("TAG", "Adapter OK")
                 click.invoke(ch.id!!)
             }
         }

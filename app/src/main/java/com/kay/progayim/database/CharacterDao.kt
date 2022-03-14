@@ -1,5 +1,6 @@
 package com.kay.progayim.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -8,7 +9,7 @@ import io.reactivex.Single
 interface CharacterDao {
 
     @Query("SELECT * FROM Characters")
-    fun getAll(): Observable<List<Characters>>
+    fun getAll(): LiveData<List<Characters>>
 
     @Query("SELECT * FROM Characters WHERE id = :id")
     fun getById(id: Long): Single<Characters>
